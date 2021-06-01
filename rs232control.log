@@ -1,0 +1,174 @@
+2021-05-20 11:06:07,120 INFO Iniciando RS232control SB version 4.0
+2021-05-20 11:06:14,703 INFO Iniciando control RS232
+2021-05-20 11:06:14,703 INFO Iniciando servidor JSON en el puerto 8080
+2021-05-20 11:06:14,734 INFO Puerto COM3 abierto
+2021-05-20 11:19:01,269 INFO INACTIVIDAD
+2021-05-20 11:19:25,013 INFO Se apaga la pantalla [REBOTES]
+2021-05-20 11:19:31,192 ERROR Error en hilo RS232
+2021-05-20 11:19:31,208 INFO El usuario ha encendido la sala al mover el ratón
+2021-05-20 11:45:06,257 INFO Iniciando RS232control SB version 4.0
+2021-05-20 11:45:12,522 INFO Iniciando control RS232
+2021-05-20 11:45:12,522 INFO Iniciando servidor JSON en el puerto 8080
+2021-05-20 11:45:12,569 INFO Puerto COM3 abierto
+2021-05-20 11:45:29,252 INFO Iniciando RS232control SB version 4.0
+2021-05-20 11:45:35,444 INFO Iniciando control RS232
+2021-05-20 11:45:35,444 INFO Iniciando servidor JSON en el puerto 8080
+2021-05-20 11:45:35,475 INFO Puerto COM3 abierto
+2021-05-20 11:46:01,921 INFO Iniciando RS232control SB version 4.0
+2021-05-20 11:46:08,123 INFO Iniciando control RS232
+2021-05-20 11:46:08,123 INFO Iniciando servidor JSON en el puerto 8080
+2021-05-20 11:46:08,170 INFO Puerto COM3 abierto
+2021-05-20 11:47:32,935 INFO Iniciando reinicio por inactividad
+2021-05-20 11:47:35,845 INFO Reinicio cancelado por el usuario
+2021-05-20 11:48:57,432 INFO Iniciando reinicio por inactividad
+2021-05-20 11:49:19,792 INFO Reinicio
+2021-05-20 11:49:25,037 ERROR Error en hilo RS232
+2021-05-20 11:49:32,746 INFO El usuario ha encendido la sala al mover el ratón
+2021-05-20 11:50:38,069 INFO Iniciando RS232control SB version 4.0
+2021-05-20 11:50:44,016 INFO Iniciando control RS232
+2021-05-20 11:50:44,016 INFO Iniciando servidor JSON en el puerto 8080
+2021-05-20 11:50:44,054 INFO Puerto COM3 abierto
+2021-05-20 11:51:47,522 INFO Iniciando reinicio por inactividad
+2021-05-20 11:52:09,806 INFO Reinicio
+2021-05-20 11:52:14,983 ERROR Error en hilo RS232
+2021-05-20 11:52:15,236 INFO El usuario ha encendido la sala al mover el ratón
+2021-05-20 11:54:30,471 INFO Iniciando RS232control SB version 4.0
+2021-05-20 11:54:37,234 INFO Iniciando control RS232
+2021-05-20 11:54:37,234 INFO Iniciando servidor JSON en el puerto 8080
+2021-05-20 11:54:37,281 INFO Puerto COM3 abierto
+2021-05-20 11:55:34,645 INFO Iniciando reinicio por inactividad
+2021-05-20 11:55:57,644 INFO Reinicio
+2021-05-20 11:56:04,145 INFO El usuario ha encendido la sala al mover el ratón
+2021-05-20 11:56:46,293 INFO El usuario ha apagado la sala
+2021-05-20 11:56:52,781 INFO El usuario ha encendido la sala al mover el ratón
+2021-05-20 13:58:12,411 INFO Iniciando RS232control SB version 4.1
+2021-05-20 13:58:20,385 INFO Iniciando control RS232
+2021-05-20 13:58:20,385 INFO Iniciando servidor JSON en el puerto 8080
+2021-05-20 13:58:20,412 INFO Puerto COM3 abierto
+2021-05-20 13:58:31,403 INFO Conectado a sesión Webex
+2021-05-20 14:05:55,600 INFO Iniciando RS232control SB version 4.1
+2021-05-20 14:06:02,242 INFO Iniciando control RS232
+2021-05-20 14:06:02,243 INFO Iniciando servidor JSON en el puerto 8080
+2021-05-20 14:06:02,269 INFO Puerto COM3 abierto
+2021-05-20 14:06:46,546 INFO Iniciando RS232control SB version 4.1
+2021-05-20 14:06:52,597 INFO Iniciando control RS232
+2021-05-20 14:06:52,597 INFO Iniciando servidor JSON en el puerto 8080
+2021-05-20 14:06:52,624 INFO Puerto COM3 abierto
+2021-05-20 14:08:36,611 INFO Iniciando RS232control SB version 4.1
+2021-05-20 14:08:42,752 INFO Iniciando control RS232
+2021-05-20 14:08:42,752 INFO Iniciando servidor JSON en el puerto 8080
+2021-05-20 14:08:42,778 INFO Puerto COM3 abierto
+2021-05-20 14:09:39,491 INFO Iniciando RS232control SB version 4.1
+2021-05-20 14:09:45,806 INFO Iniciando control RS232
+2021-05-20 14:09:45,807 INFO Iniciando servidor JSON en el puerto 8080
+2021-05-20 14:09:45,833 INFO Puerto COM3 abierto
+2021-05-20 14:10:03,443 INFO Iniciando RS232control SB version 4.1
+2021-05-20 14:10:09,647 INFO Iniciando control RS232
+2021-05-20 14:10:09,647 INFO Iniciando servidor JSON en el puerto 8080
+2021-05-20 14:10:09,674 INFO Puerto COM3 abierto
+2021-05-20 14:12:54,940 INFO Iniciando RS232control SB version 4.1
+2021-05-20 14:13:01,366 INFO Iniciando control RS232
+2021-05-20 14:13:01,366 INFO Iniciando servidor JSON en el puerto 8080
+2021-05-20 14:13:01,393 INFO Puerto COM3 abierto
+2021-05-20 14:18:52,564 INFO Iniciando RS232control SB version 4.1
+2021-05-20 14:18:59,076 INFO Iniciando control RS232
+2021-05-20 14:18:59,076 INFO Iniciando servidor JSON en el puerto 8080
+2021-05-20 14:18:59,103 INFO Puerto COM3 abierto
+2021-05-20 14:19:29,625 INFO Iniciando RS232control SB version 4.1
+2021-05-20 14:19:35,888 INFO Iniciando control RS232
+2021-05-20 14:19:35,888 INFO Iniciando servidor JSON en el puerto 8080
+2021-05-20 14:19:35,916 INFO Puerto COM3 abierto
+2021-05-20 14:21:35,419 INFO Iniciando RS232control SB version 4.1
+2021-05-20 14:21:41,489 INFO Iniciando control RS232
+2021-05-20 14:21:41,489 INFO Iniciando servidor JSON en el puerto 8080
+2021-05-20 14:21:41,515 INFO Puerto COM3 abierto
+2021-05-20 14:26:03,361 INFO Iniciando RS232control SB version 4.1
+2021-05-20 14:26:09,770 INFO Iniciando control RS232
+2021-05-20 14:26:09,770 INFO Iniciando servidor JSON en el puerto 8080
+2021-05-20 14:26:09,797 INFO Puerto COM3 abierto
+2021-05-20 14:27:42,185 INFO Iniciando RS232control SB version 4.1
+2021-05-20 14:27:48,352 INFO Iniciando control RS232
+2021-05-20 14:27:48,353 INFO Iniciando servidor JSON en el puerto 8080
+2021-05-20 14:27:48,379 INFO Puerto COM3 abierto
+2021-05-20 14:28:44,876 INFO Iniciando RS232control SB version 4.1
+2021-05-20 14:28:50,701 INFO Iniciando control RS232
+2021-05-20 14:28:50,701 INFO Iniciando servidor JSON en el puerto 8080
+2021-05-20 14:28:50,741 INFO Puerto COM3 abierto
+2021-05-26 11:26:06,241 INFO Iniciando RS232control SB version 4.1
+2021-05-26 11:26:15,739 INFO Iniciando control RS232
+2021-05-26 11:26:15,753 INFO Iniciando servidor JSON en el puerto 8080
+2021-05-26 11:26:15,802 INFO Puerto COM3 abierto
+2021-05-26 11:28:25,689 INFO Iniciando reinicio por inactividad
+2021-05-26 11:28:27,432 INFO Reinicio cancelado por el usuario
+2021-05-26 14:28:09,565 INFO Iniciando RS232control SB version 4.1
+2021-05-26 14:28:14,779 INFO Iniciando control RS232
+2021-05-26 14:28:14,780 INFO Iniciando servidor JSON en el puerto 8080
+2021-05-26 14:28:14,807 INFO Puerto COM3 abierto
+2021-05-26 14:29:51,646 INFO El usuario ha apagado la sala
+2021-05-26 14:29:56,307 INFO El usuario ha encendido la sala al mover el ratón
+2021-05-26 14:31:50,592 INFO Iniciando RS232control SB version 4.1
+2021-05-26 14:31:55,389 INFO Iniciando control RS232
+2021-05-26 14:31:55,389 INFO Iniciando servidor JSON en el puerto 8080
+2021-05-26 14:31:55,420 INFO Puerto COM3 abierto
+2021-05-26 14:32:12,132 INFO Iniciando RS232control SB version 4.1
+2021-05-26 14:32:16,736 INFO Iniciando control RS232
+2021-05-26 14:32:16,736 INFO Iniciando servidor JSON en el puerto 8080
+2021-05-26 14:32:16,783 INFO Puerto COM3 abierto
+2021-05-26 14:33:50,235 INFO Iniciando RS232control SB version 4.1
+2021-05-26 14:33:54,817 INFO Iniciando control RS232
+2021-05-26 14:33:54,817 INFO Iniciando servidor JSON en el puerto 8080
+2021-05-26 14:33:54,865 INFO Puerto COM3 abierto
+2021-05-26 14:38:28,104 INFO Iniciando RS232control SB version 4.1
+2021-05-26 14:38:32,694 INFO Iniciando control RS232
+2021-05-26 14:38:32,695 INFO Iniciando servidor JSON en el puerto 8080
+2021-05-26 14:38:32,721 INFO Puerto COM3 abierto
+2021-05-26 14:40:01,937 INFO Iniciando reinicio por inactividad
+2021-05-26 14:40:04,605 INFO Reinicio cancelado por el usuario
+2021-05-26 14:40:27,960 INFO Conectado a sesion Webex
+2021-05-26 14:42:33,588 INFO Desconectado de una sesion Webex
+2021-05-26 14:43:42,889 INFO Iniciando reinicio por inactividad
+2021-05-26 14:43:45,292 INFO Reinicio cancelado por el usuario
+2021-05-26 14:44:17,772 INFO Conectado a sesion Google Meets
+2021-05-26 15:06:34,182 INFO El usuario ha apagado la sala
+2021-05-26 15:06:40,510 INFO Desconectado de una sesion Google Meets
+2021-05-26 15:06:48,437 INFO El usuario ha encendido la sala al mover el ratón
+2021-05-26 15:08:14,156 INFO Iniciando reinicio por inactividad
+2021-05-26 15:08:37,423 INFO Reinicio
+2021-05-26 15:08:51,690 INFO El usuario ha encendido la sala al mover el ratón
+2021-05-26 15:09:53,324 INFO Iniciando RS232control SB version 4.1
+2021-05-26 15:09:57,019 INFO Iniciando control RS232
+2021-05-26 15:09:57,020 INFO Iniciando servidor JSON en el puerto 8080
+2021-05-26 15:09:57,046 INFO Puerto COM3 abierto
+2021-05-26 15:11:48,813 INFO Iniciando reinicio por inactividad
+2021-05-26 15:12:12,081 INFO Reinicio
+2021-05-26 15:12:20,904 INFO El usuario ha encendido la sala al mover el ratón
+2021-05-26 15:13:23,344 INFO Iniciando RS232control SB version 4.1
+2021-05-26 15:13:27,090 INFO Iniciando control RS232
+2021-05-26 15:13:27,091 INFO Iniciando servidor JSON en el puerto 8080
+2021-05-26 15:13:27,118 INFO Puerto COM3 abierto
+2021-05-26 15:14:26,124 INFO Iniciando reinicio por inactividad
+2021-05-26 15:14:49,124 INFO Reinicio
+2021-05-26 15:14:59,870 INFO El usuario ha encendido la sala al mover el ratón
+2021-05-26 15:15:29,849 INFO Iniciando RS232control SB version 4.1
+2021-05-26 15:15:33,509 INFO Iniciando control RS232
+2021-05-26 15:15:33,510 INFO Iniciando servidor JSON en el puerto 8080
+2021-05-26 15:15:33,536 INFO Puerto COM3 abierto
+2021-05-26 15:16:29,438 INFO Iniciando reinicio por inactividad
+2021-05-26 15:16:52,435 INFO Reinicio
+2021-05-26 15:17:05,366 INFO El usuario ha encendido la sala al mover el ratón
+2021-05-26 15:18:38,452 INFO Iniciando reinicio por inactividad
+2021-05-26 15:19:01,452 INFO Reinicio
+2021-05-26 15:56:40,896 INFO El usuario ha encendido la sala al mover el ratón
+2021-05-26 15:57:41,952 INFO Iniciando reinicio por inactividad
+2021-05-26 15:58:04,951 INFO Reinicio
+2021-05-27 08:38:58,733 INFO El usuario ha encendido la sala al mover el ratón
+2021-05-27 09:19:04,878 INFO Iniciando RS232control SB version 4.1
+2021-05-27 09:19:09,797 INFO Iniciando control RS232
+2021-05-27 09:19:09,797 INFO Iniciando servidor JSON en el puerto 8080
+2021-05-27 09:19:09,823 INFO Puerto COM3 abierto
+2021-05-27 09:19:58,319 INFO El usuario ha apagado la sala
+2021-05-27 09:20:05,494 INFO El usuario ha encendido la sala al mover el ratón
+2021-05-28 13:17:32,145 INFO Iniciando RS232control SB version 4.1
+2021-05-28 13:17:34,437 INFO Iniciando control RS232
+2021-05-28 13:17:34,437 INFO Iniciando servidor JSON en el puerto 8080
+2021-05-28 13:17:34,479 INFO Puerto COM3 abierto
