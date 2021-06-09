@@ -172,3 +172,28 @@
 2021-05-28 13:17:34,437 INFO Iniciando control RS232
 2021-05-28 13:17:34,437 INFO Iniciando servidor JSON en el puerto 8080
 2021-05-28 13:17:34,479 INFO Puerto COM3 abierto
+2021-06-07 09:30:36,524 INFO Iniciando RS232control SB version 4.1
+2021-06-07 09:30:39,713 INFO Iniciando control RS232
+2021-06-07 09:30:39,713 INFO Iniciando servidor JSON en el puerto 8080
+2021-06-07 09:30:39,767 INFO Puerto COM3 abierto
+2021-06-07 09:31:28,001 INFO Iniciando RS232control SB version 4.1
+2021-06-07 09:31:30,928 INFO Iniciando control RS232
+2021-06-07 09:31:30,928 INFO Iniciando servidor JSON en el puerto 8080
+2021-06-07 09:31:30,979 INFO Puerto COM3 abierto
+2021-06-07 10:03:35,145 INFO Iniciando reinicio por inactividad
+2021-06-07 10:03:37,007 INFO Reinicio cancelado por el usuario
+2021-06-08 08:53:08,611 INFO Iniciando RS232control SB version 4.1
+2021-06-08 08:53:15,674 INFO Iniciando control RS232
+2021-06-08 08:53:15,675 INFO Iniciando servidor JSON en el puerto 8080
+2021-06-08 08:53:15,703 INFO Puerto COM3 abierto
+2021-06-08 08:55:09,392 INFO Iniciando RS232control SB version 4.1
+2021-06-08 08:55:11,924 INFO Iniciando control RS232
+2021-06-08 08:55:11,924 INFO Iniciando servidor JSON en el puerto 8080
+2021-06-08 08:55:11,955 INFO Puerto COM3 abierto
+2021-06-08 09:04:30,322 INFO Iniciando reinicio por inactividad
+2021-06-08 09:04:31,156 INFO Reinicio cancelado por el usuario
+2021-06-09 09:53:43,598 INFO Iniciando RS232control SB version 4.1
+2021-06-09 09:53:50,286 INFO Iniciando control RS232
+2021-06-09 09:53:50,286 INFO Iniciando servidor JSON en el puerto 8080
+2021-06-09 09:53:50,314 INFO Puerto COM3 abierto
+2021-06-09 09:55:12,749 INFO Conectado a sesion Google Meets
