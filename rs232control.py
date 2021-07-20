@@ -5,6 +5,7 @@ import api
 import logging
 import rs232
 import process
+import restartSession
 import adviceMessage
 
 import threading
@@ -22,18 +23,31 @@ if __name__ == "__main__":
     formatter = logging.Formatter('%(asctime)s %(levelname)s %(message)s')
     handler.setFormatter(formatter)
     logger.addHandler(handler)
-    config.init(logger)
 
-    logger.info("Iniciando RS232control SB version " + config.VERSION)
-    process.app_system(logger)
+    hilo2 = threading.Thread(target=api.init, args=[logger])
 
-    if process.num_process_running('rs232control.exe') < 3:
-        hilo1 = threading.Thread(target=rs232.init, args=[logger])
-        hilo2 = threading.Thread(target=api.init, args=[logger])
-        hilo1.start()
+    #Siempre tiene que haber un proceso minimo, el de la API
+    # Si no esta significa que no se ha iniciado el programa
+    if process.num_process_running(logger, 'rs232control.exe') < 3:
         hilo2.start()
+        #Si devuelve True el fichero de configuración se ha leido correctamente, iniciamos todos los servicios
+        # Si hay algun error solo iniciamos la parte de la API para tener comunicacion con la web
+        if config.init(logger):
+            logger.info("Iniciando RS232control version " + config.VERSION)
+            if config.KEYPAD:
+                logger.info("Tipo sala: Con botonera")
+                #Al estar configurada la botonera necesitamos iniciar el lector RS232
+                hilo3 = threading.Thread(target=rs232.init_reader, args=[logger])
+                hilo3.start()
+            else:
+                logger.info("Tipo sala: Sin botonera")
+                rs232.init_sender(logger)
+            process.app_system(logger)
+            hilo1 = threading.Thread(target=restartSession.init, args=[logger])
+            hilo1.start()
+            adviceMessage.init(logger)
+
         time.sleep(10)
-        adviceMessage.init(logger)
 
     else:
-        logger.error(u"No se puede iniciar, existe otro proceso 'rs232control.exe' en ejecucion.")
+        logger.info("RS232 Control ya esta en ejecución")

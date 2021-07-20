@@ -1,26 +1,29 @@
+import binascii
 import sys
 
 import config
-import info
 import serial
 import time
 import os
-import process
-import statsServer
-import adviceMessage
 import win32api
 import webbrowser
+import restartSession
 
 from binascii import unhexlify
+from serial.tools import list_ports
+
+BAUD = 9600
+SIZE = 8
+PARITY = "N"
+STOP = 1
 
 REBOOTING = False
 SYSTEM_ON = True
+SER = None
 
 '''
 Clase que recibe los bytes de entrada en el puerto serie cuando hay botonera
 '''
-
-
 class RingBuffer:
     def __init__(self):
         self.data = ''
@@ -44,8 +47,6 @@ class RingBuffer:
 '''
 Recibe los bytes y lo devuelve en un formato string
 '''
-
-
 def string_to_hex_botonera(asciiString):
     code = ""
     '''
@@ -65,204 +66,158 @@ def string_to_hex(str_hex):
     return unhexlify(str_hex.replace(":", ""))
 
 
-def Vol_UP():
-    win32api.keybd_event(0xAF, 0, 0, 0)
-
-
-def Vol_DOWN():
-    win32api.keybd_event(0xAE, 0, 0, 0)
-
-
-def Vol_MUTE():
-    win32api.keybd_event(0xAD, 0, 0, 0)
-
-
-def clean_pc():
-    os.system(r"taskkill /f /im chrome.exe")
-    os.system(r"reg delete HKEY_CURRENT_USER\Software\WebEx\ProdTools\ /f")
-
-    os.system(r"del /S /Q C:\Users\usr_salas_autolog\Downloads\*.*")
-    os.system(r"del /S /Q C:\Users\usr_salas_autolog\Documents\*.*")
-    os.system(r"del /S /Q C:\Users\usr_salas_autolog\Desktop\*.*")
-    os.system(r"del /S /Q C:\Users\usr_salas_autolog\Pictures\*.*")
-    os.system(r"del /S /Q C:\Users\usr_salas_autolog\Videos\*.*")
-    os.system(r"del /S /Q C:\Users\usr_salas_autolog\Music\*.*")
-    os.system(r"taskkill /f /im chrome.exe")
-    os.system(r"taskkill /f /im atmgr.exe")
-    process.delete_app_user()
-
-
-def shutdown_process(ser):
-    global SYSTEM_ON
-    global REBOOTING
-
-    if not config.BOTONERA:
-        ser.write(string_to_hex(config.OFF))
-
-    statsServer.sendStatus(config.ID, "roomPower", "off")
-    clean_pc()
-    SYSTEM_ON = False
-    REBOOTING = False
-    config.BUTTON_OFF = False
-
-
-def init(logger):
-    global SYSTEM_ON
-    global REBOOTING
-
-    logger.info("Iniciando control RS232")
-
-    try:
-        ser = serial.Serial(config.PORT, config.BAUD, config.SIZE, config.PARITY, config.STOP, timeout=None)
-        # open the serial port
-        if ser.isOpen():
-            logger.info("Puerto " + config.PORT + " abierto")
-            config.OPEN_PORT = True
-    except:
-        logger.error("No se puede abrir el puerto " + config.PORT)
-        config.OPEN_PORT = False
-
-    t = time.time()
-
-    webex_open = False
-    if config.BOTONERA:
-        buff = RingBuffer()
-
-    while True:
+def configure_port_monitor(logger):
+    # Recorremos todos los puertos COM del pc
+    for port in list(list_ports.comports()):
         try:
-            if info.get_idle_time() < 3 and not SYSTEM_ON:
-                logger.info("El usuario ha encendido la sala al mover el ratÃ³n")
-                SYSTEM_ON = True
-                REBOOTING = False
-                cont = 0
-                while cont <= 2:
-                    if not config.BOTONERA:
-                        ser.write(string_to_hex(config.ON))
-                    time.sleep(5)
-                    cont = cont + 1
-                statsServer.sendStatus(config.ID, "roomPower", "on")
+            print(str(port).split(" ")[0])
+            port = str(port).split(" ")[0]
+            # Trata de abrir el puerto para iniciar la comunicación
+            ser = serial.Serial(str(port), BAUD, SIZE, PARITY, STOP, timeout=None, write_timeout=0)
 
-            elif SYSTEM_ON and not REBOOTING:
-                if (info.get_idle_time() > config.REBOOT_TIME * 60) and not config.MEETG and not config.WEBEXS:
-                    logger.info("Iniciando reinicio por inactividad")
-                    adviceMessage.show()
-                    REBOOTING = True
-                elif config.BUTTON_OFF:
-                    logger.info("El usuario ha apagado la sala")
-                    shutdown_process(ser)
+            if ser.isOpen():
+                # probamos si hay comunicación con el monitor
+                # al haber Samsung y Sony probamos con los dos y el que responda ese es
 
-            elif SYSTEM_ON and REBOOTING:
-                if info.get_idle_time() < config.REBOOT_TIME * 60:
-                    logger.info("Reinicio cancelado por el usuario")
-                    adviceMessage.hide()
-                    REBOOTING = False
-                elif info.get_idle_time() > ((config.REBOOT_TIME * 60) + 23):
-                    logger.info("Reinicio")
-                    adviceMessage.hide()
-                    shutdown_process(ser)
-                elif config.BUTTON_OFF:
-                    logger.info("El usuario ha apagado la sala")
-                    adviceMessage.hide()
-                    shutdown_process(ser)
+                ###########
+                # SAMSUNG #
+                ###########
+                # Obtenemos el estado actual del monitor (apagado o encendido)
+                ser.write(string_to_hex("AA:11:01:00:12"))
+                time.sleep(1)
+                ###########
+                #  SONY   #
+                ###########
+                # Obtenemos el estado actual del monitor (apagado o encendido)
+                ser.write(string_to_hex("8C:00:00:02:00:8F"))
+                time.sleep(1)
 
-            # Check every 10 seconds
-            if time.time() - t > 10:
-                if process.process_running("chrome.exe"):
-                    if config.STATUS == "START MEET" and (config.MEETG == True):
-                        config.STATUS = ""
-                        logger.info("Conectado a sesion Google Meets")
-                        statsServer.sendStatus(config.ID, "vcInCall", "yes")
-                    elif config.STATUS == "END MEET" and (config.MEETG == True):
-                        config.MEETG = False
-                        config.STATUS = ""
-                        logger.info("Desconectado de una sesion Google Meets")
-                        statsServer.sendStatus(config.ID, "vcInCall", "no")
-                elif config.MEETG:
-                    config.STATUS = ""
-                    config.MEETG = False
-                    logger.info("Desconectado de una sesion Google Meets")
-                    statsServer.sendStatus(config.ID, "vcInCall", "no")
-            if time.time() - t > 10:
-                if process.process_running("chrome.exe"):
-                    if config.STATUSF == "START WEBEX" and (config.WEBEXS == True):
-                        config.STATUSF = ""
-                        logger.info("Conectado a sesion Webex")
-                        statsServer.sendStatus(config.ID, "vcInCall", "yes")
-                    elif config.STATUSF == "END WEBEX" and (config.WEBEXS == True):
-                        config.WEBEXS = False
-                        config.STATUSF = ""
-                        logger.info("Desconectado de una sesion Webex")
-                        statsServer.sendStatus(config.ID, "vcInCall", "no")
-                elif config.WEBEXS:
-                    config.STATUSF = ""
-                    config.WEBEXS = False
-                    logger.info("Desconectado de una sesion Google Webex")
-                    statsServer.sendStatus(config.ID, "vcInCall", "no")
+                ###########
+                # NEXCOM  #
+                ###########
+                # Obtenemos el estado actual del monitor (apagado o encendido)
+                ser.write(string_to_hex("7F:08:99:A2:B3:C4:02:FF:01:00:CF"))
+                time.sleep(1)
 
-                    # Check every 10 seconds
-            if time.time() - t > 10:
-                t = time.time()
-                if process.process_running(config.EXE):
-                    if not webex_open:
-                        logger.info("Conectado a sesiÃ³n Webex")
-                        webex_open = True
-                        statsServer.sendStatus(config.ID, "vcInCall", "yes")
-                else:
-                    if webex_open:
-                        logger.info("Desconectado de sesiÃ³n Webex")
-                        os.system(r"reg delete HKEY_CURRENT_USER\Software\WebEx\ProdTools\ /f")
-                        webex_open = False
-                        statsServer.sendStatus(config.ID, "vcInCall", "no")
-
-            '''
-            Si la sala tiene botonera
-            Se lee si la botonera ha enviado algún comando RS232
-            '''
-            if config.BOTONERA:
                 bytes_to_read = ser.inWaiting()
-                '''
-                Si hay datos para leer se leen
-                '''
                 if bytes_to_read:
+                    config.OPEN_PORT = True
+                    config.PORT = str(port)
+                    buff = RingBuffer()
                     buff.append(ser.read(bytes_to_read))
-                    if buff.data.endswith(config.ON):
-                        logger.info("Pulsado ON en botonera")
-                        statsServer.sendStatus(config.ID, "roomPower", "on")
-                    if buff.data.endswith(config.OFF):
-                        logger.info("Pulsado OFF en botonera")
-                        config.BUTTON_OFF = True
-                    if buff.data.endswith(config.VOLUP):
-                        logger.info("Pulsado VOL + en botonera")
-                        Vol_UP()
-                    if buff.data.endswith(config.VOLDOWN):
-                        logger.info("Pulsado VOL - en botonera")
-                        Vol_DOWN()
-                    if buff.data.endswith(config.WEBEX):
-                        logger.info("Pulsado WEBEX")
-
-                        if os.path.isfile('C:/Program Files (x86)/Google/Chrome/Application/chrome.exe'):
-                            chrome_path = 'C:/Program Files (x86)/Google/Chrome/Application/chrome.exe %s'
-                        else:
-                            chrome_path = 'C:/Program Files/Google/Chrome/Application/chrome.exe %s'
-
-                        try:
-                            webbrowser.get(chrome_path).open(config.URL)
-                            logger.info("Abriendo " + config.URL + " en el navegador")
-                        except:
-                            logger.error("No se ha podido abrir el navegador")
-                    if buff.data.endswith(config.HDMI):
-                        logger.info("Pulsado HDMI en botonera")
-                    if buff.data.endswith(config.VGA):
-                        logger.info("Pulsado VGA en botonera")
-                    if buff.data.endswith(config.PCSALA):
-                        logger.info("Pulsado PC DE SALA en botonera")
-
-            time.sleep(0.002)
-        except TypeError as e:
+                    print(buff.data)
+                    if buff.data.startswith(":AA:FF:01:"):
+                        config.MONITOR = "SAMSUNG"
+                        logger.info("Puerto " + port + " abierto, monitor Samsung")
+                        return ser
+                    elif buff.data.startswith(":70:00:"):
+                        config.MONITOR = "SONY"
+                        logger.info("Puerto " + port + " abierto, monitor Sony")
+                        return ser
+                    elif buff.data.startswith(":7F:09:99"):
+                        config.MONITOR = "NEXCOM"
+                        logger.info("Puerto " + port + " abierto, monitor Nexcom")
+                        return ser
+                    else:
+                        config.MONITOR = "UNKNOW"
+                        logger.info("Puerto " + port + " abierto, monitor desconocido")
+                        return ser
+        except binascii.Error as e:
             print(e)
-        except UnicodeError as e:
+        except serial.serialutil.SerialTimeoutException as e:
+            print(e)
+        except serial.serialutil.SerialException as e:
             print(e)
         except:
-            logger.error("Error en hilo RS232")
-            print(sys.exc_info()[0])
+            logger.error(sys.exc_info()[0])
+
+    logger.info("Control RS232 no configurado")
+    return None
+
+
+def init_reader(logger):
+    logger.info("Iniciando lector RS232")
+    if config.PORT:
+        try:
+            # Trata de abrir el puerto para iniciar la comunicación
+            ser = serial.Serial(config.PORT, BAUD, SIZE, PARITY, STOP, timeout=None)
+
+            if ser.isOpen():
+                logger.info("Puerto " + config.PORT + " abierto")
+                reader(logger, ser)
+            else:
+                logger.error("No se puede abrir el puerto " + config.PORT)
+        except:
+            logger.error("Error al abrir el puerto " + config.PORT)
+    else:
+        logger.error("Configurada botonera pero no el puerto")
+
+
+def reader(logger, ser):
+    buff = RingBuffer()
+    try:
+        while True:
             time.sleep(0.002)
+            bytes_to_read = ser.inWaiting()
+            # Si hay datos para leer se leen
+            if bytes_to_read:
+                buff.append(ser.read(bytes_to_read))
+                print(buff.data)
+
+                if buff.data.endswith("8D:00:04:01:92"):
+                    logger.info("Pulsado ON en botonera")
+                if buff.data.endswith("8D:00:04:02:93"):
+                    logger.info("Pulsado OFF en botonera")
+                    restartSession.restart(logger)
+                if buff.data.endswith("8D:00:01:01:8F"):
+                    logger.info("Pulsado VOL + en botonera")
+                    win32api.keybd_event(0xAF, 0, 0, 0)
+                if buff.data.endswith("8D:00:01:02:90"):
+                    logger.info("Pulsado VOL - en botonera")
+                    win32api.keybd_event(0xAE, 0, 0, 0)
+                if buff.data.endswith("8D:00:03:01:91"):
+                    logger.info("Pulsado WEBEX")
+
+                    if os.path.isfile('C:/Program Files (x86)/Google/Chrome/Application/chrome.exe'):
+                        chrome_path = 'C:/Program Files (x86)/Google/Chrome/Application/chrome.exe %s'
+                    else:
+                        chrome_path = 'C:/Program Files/Google/Chrome/Application/chrome.exe %s'
+
+                    try:
+                        webbrowser.get(chrome_path).open("https://bbva.webex.com")
+                        logger.info("Abriendo  Webex en el navegador")
+                    except:
+                        logger.error("No se ha podido abrir el navegador")
+    except:
+        logger.error("Error al leer la botonera")
+
+
+def init_sender(logger):
+    global SER
+    SER = configure_port_monitor(logger)
+
+
+def send_on():
+    if SER and config.MONITOR:
+        if config.MONITOR == "SAMSUNG":
+            print("Encendido Samsung")
+            SER.write(string_to_hex("AA:11:01:01:01:14"))
+        elif config.MONITOR == "SONY":
+            print("Encendido SONY")
+            SER.write(string_to_hex("8C:00:00:02:01:8F"))
+        elif config.MONITOR == "NEXCOM":
+            print("Encendido NEXCOM")
+            SER.write(string_to_hex("7F 08 99 A2 B3 C4 02 FF 01 00 CF"))
+
+
+def send_off():
+    if SER and config.MONITOR:
+        if config.MONITOR == "SAMSUNG":
+            print("Apagado Samsung")
+            SER.write(string_to_hex("AA:11:01:01:00:13"))
+        elif config.MONITOR == "SONY":
+            print("Apagado SONY")
+            SER.write(string_to_hex("8C:00:00:02:00:8E"))
+        elif config.MONITOR == "NEXCOM":
+            print("Apagado NEXCOM")
+            SER.write(string_to_hex("7F 08 99 A2 B3 C4 02 FF 01 01 CF"))

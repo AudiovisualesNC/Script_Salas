@@ -1,81 +1,51 @@
 import os
-import subprocess
-
 import psutil
 
 APP_SYSTEM = list()
-LOGGER = None
 
 
-def process_running(name_process):
+def process_running(logger, name_process):
     try:
-        found = False
-        for proc in psutil.process_iter():
-            if proc.name() == name_process:
-                found = True
-        return found
+        for proc in psutil.process_iter(['name']):
+            if proc.info["name"] == name_process:
+                return True
+        return False
     except:
-        LOGGER.error("Error en ProcessRunning")
+        logger.error("Error en process_running")
+        return None
 
 
-def num_process_running(name_process):
+def num_process_running(logger, name_process):
     try:
         num = 0
-        for proc in psutil.process_iter():
-            if proc.name() == name_process:
+        for proc in psutil.process_iter(['pid', 'name']):
+            if proc.info["name"] == name_process:
                 num = num + 1
         return num
     except:
-        LOGGER.error("Error en numProcessRunning")
+        logger.error("Error en num_process_running")
+        return None
 
 
-def delete_app_user():
-    global LOGGER
-
+def delete_app_user(logger):
     try:
-        command_taskApp = 'tasklist /fi "username eq usr_salas_autolog" /FO LIST'
-        app_tasklist = subprocess.Popen(command_taskApp, stdout=subprocess.PIPE, stdin=subprocess.PIPE,
-                                        stderr=subprocess.PIPE, shell=True)
-        (stdout, stderr) = app_tasklist.communicate()
-        replace_string = stdout.replace(b' ', b'')
-        replace_s1 = replace_string.replace(b'\r\n\r\n', b'\r\n')
-        replace_s2 = replace_s1.replace(b'\r\n', b'|')
-        replace_s3 = replace_s2.split(b'|')
-        for val in replace_s3:
-            Appsys = False
-            if b'Nombredeimagen:' in val:
-                value = val.split(b':')
-                for programs in APP_SYSTEM:
-                    if value[1] == programs:
-                        Appsys = True
-                if not Appsys:
-                    command_kill = r'''taskkill /f /im  {}'''.format(str(value[1], 'utf-8'))
-                    os.system(command_kill)
-        pass
+        for proc in psutil.process_iter(['pid', 'name', 'username']):
+            if proc.info["username"]:
+                if proc.info["username"].find("usr_salas_autolog") > -1 and not proc.info["name"] in APP_SYSTEM:
+                    os.system("taskkill /f /im " + proc.info["name"] + " /t")
 
     except:
-        LOGGER.error("Error en deleteAppUser")
+        logger.error("Error en función delete_app_user ")
 
 
 def app_system(logger):
-    global LOGGER
-    LOGGER = logger
+    global APP_SYSTEM
 
     try:
-        command_taskApp = 'tasklist /fi "username eq usr_salas_autolog" /FO LIST'
-        app_tasks = subprocess.Popen(command_taskApp, stdout=subprocess.PIPE, stdin=subprocess.PIPE,
-                                       stderr=subprocess.PIPE, shell=True)
-        (stdout, stderr) = app_tasks.communicate()
-        replace_string = stdout.replace(b' ', b'')
-        replace_s1 = replace_string.replace(b'\r\n\r\n', b'\r\n')
-        replace_s2 = replace_s1.replace(b'\r\n', b'|')
-        replace_s3 = replace_s2.split(b'|')
-        # print(reemplaceS3)
-        for value in replace_s3:
-            if b'Nombredeimagen:' in value:
-                value_s = value.split(b':')
-                APP_SYSTEM.append(value_s[1])
-        pass
+        for proc in psutil.process_iter(['pid', 'name', 'username']):
+            if proc.info["username"]:
+                if proc.info["username"].find("usr_salas_autolog") > -1:
+                    APP_SYSTEM.append((proc.info["name"]))
 
     except:
         logger.error("Error en función AppSystem ")

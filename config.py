@@ -1,106 +1,86 @@
 import configparser
+import re
+import os.path
 
 CONFIG_FILE = "config.ini"
 
 
 def init(logger):
     try:
-        config = configparser.ConfigParser()
-        config.read(CONFIG_FILE)
-
         # RS232 variables
-
+        global KEYPAD
+        KEYPAD = False
         global PORT
-        global BAUD
-        global SIZE
-        global PARITY
-        global STOP
-
-        PORT = str(config.get("RS232", "PORT"))
-        BAUD = int(config.get("RS232", "BAUD"))
-        SIZE = int(config.get("RS232", "SIZE"))
-        PARITY = str(config.get("RS232", "PARITY"))
-        STOP = int(config.get("RS232", "STOP"))
-
-        # RS232 MONITOR COMMANDS
-
-        global ON
-        global OFF
-        global BOTONERA
-
-        ON = str(config.get("TV_COMMANDS", "ON"))
-        OFF = str(config.get("TV_COMMANDS", "OFF"))
-        BOTONERA = False
-
-        if config.get("TIPO_SALA", "SALA") == "SALA CON BOTONERA":
-            global VOLUP
-            global VOLDOWN
-            global REBOOT
-            global WEBEX
-            global HDMI
-            global VGA
-            global PCSALA
-
-            BOTONERA = True
-            VOLUP = str(config.get("COMMANDS", "VOL_UP"))
-            VOLDOWN = str(config.get("COMMANDS", "VOL_DOWN"))
-            REBOOT = str(config.get("COMMANDS", "REBOOT"))
-            WEBEX = str(config.get("COMMANDS", "WEBEX"))
-            HDMI = str(config.get("TV_COMMANDS", "HDMI"))
-            VGA = str(config.get("TV_COMMANDS", "VGA"))
-            PCSALA = str(config.get("TV_COMMANDS", "SALAPC"))
+        PORT = None
 
         # ROOM DATA
-
-        global NOMBRE
+        global NAME
+        NAME = "EMPTY"
         global ID
-
-        NOMBRE = str(config.get("ROOM_DATA", "NAME"))
-        ID = str(config.get("ROOM_DATA", "ID"))
-
-        # COLLABORATION DATA
-
-        global URL
-        global EXE
-
-        URL = str(config.get("COLLABORATION", "URL"))
-        EXE = str(config.get("COLLABORATION", "EXE"))
-
-        # STATS SERVER DATA
-
-        global RCC_URL
-        global RCC_USER
-        global RCC_PASS
-
-        RCC_URL = str(config.get("RCC", "URL_EST"))
-        RCC_USER = str(config.get("RCC", "USER"))
-        RCC_PASS = str(config.get("RCC", "PASS"))
-
-        # AUTOMATIC CLOSE SESSION
+        ID = "00000"
 
         global REBOOT_TIME
+        REBOOT_TIME = 5
 
-        REBOOT_TIME = int(config.get("AUTOREBOOT", "TIME"))
+
+        #Comprobamos si existe el fichero de configuración, si no existe se dejan los valores por defecto
+        if os.path.isfile('./config.ini'):
+
+            config = configparser.ConfigParser()
+            config.read(CONFIG_FILE)
+
+            # Comprobamos si existe el campo KEYPAD y obtenemos su valor
+            # En caso de que no exista consideramos que las salas no tienen botonera
+            if config.has_option("ROOM_TYPE", "KEYPAD"):
+                if config.get("ROOM_TYPE", "KEYPAD") == "True":
+                    KEYPAD = True
+                    # Si tiene botonera necesitamos conocer el puerto COM, ya que la botonera
+                    # no responde a comandos y no podemos averiguarlo
+                    if config.has_option("RS232", "PORT"):
+                        # El puerto com siempre es COM1, COM2, COM3.... Si no es asi esta mal configurado
+                        if re.search("^COM\d", config.get("RS232", "PORT")):
+                            PORT = str(config.get("RS232", "PORT"))
+                            print(PORT)
+                        else:
+                            logger.error("Puerto COM mal configurado")
+
+            if config.has_option("ROOM_DATA", "NAME"):
+                NAME = str(config.get("ROOM_DATA", "NAME"))
+
+            if config.has_option("ROOM_DATA", "ID"):
+                ID = str(config.get("ROOM_DATA", "ID"))
+
+            # AUTOMATIC CLOSE SESSION
+
+
+
+            if config.has_option("RESTART", "TIME"):
+                try:
+                    REBOOT_TIME = int(config.get("RESTART", "TIME"))
+                except:
+                    REBOOT_TIME = 5
 
         # OTHER GLOBAL VARIABLES
 
         global OPEN_PORT
         global VERSION
         global HTTP_PORT
-        global BUTTON_OFF
-        global STATUS
-        global MEETG
-        global WEBEXS
-        global STATUSF
+        global MONITOR
+        global MEETING
 
-        STATUSF = ""
-        WEBEXS = False
-        MEETG = False
-        STATUS = ""
-        BUTTON_OFF = False
+        MEETING = False
         OPEN_PORT = False
-        VERSION = "4.1"
-        HTTP_PORT = 8080
+        VERSION = "4.2"
+        MONITOR = None
 
+        return True
+
+    except configparser.Error as e:
+        logger.error("Error al leer los datos del fichero config.ini " + e.message)
+        return False
+    except TypeError as e:
+        logger.error("Error al leer los datos del fichero config.ini " + str(e))
+        return False
     except:
         logger.error("Error al leer los datos del fichero config.ini")
+        return False

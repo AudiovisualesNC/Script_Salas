@@ -2,6 +2,7 @@ import config
 import json
 import info
 import os
+import restartSession
 
 from http.server import BaseHTTPRequestHandler, HTTPServer
 
@@ -16,58 +17,38 @@ class HTTPRequestHandler(BaseHTTPRequestHandler):
         global LOGGER
 
         try:
-            if self.path == ('/roomdata.json'):
+            if self.path == '/roomdata.json':
                 # send response code:
                 self.send_response(200)
                 # send headers:
                 self.send_header("Content-type", "text/plain")
                 self.send_header("Access-Control-Allow-Origin", "*")
                 BaseHTTPRequestHandler.end_headers(self)
-
                 strVal = json.dumps(info.room_info(LOGGER))
-
                 self.wfile.write(bytes(strVal, 'utf-8'))
 
-            if self.path == ('/poweroff'):
+            if self.path == '/getmeet':
                 # send response code:
-                config.BUTTON_OFF = True
 
+                self.send_response(200)
+                self.send_header("Content-type", "text/plain")
+                self.send_header("Access-Control-Allow-Origin", "*")
+                BaseHTTPRequestHandler.end_headers(self)
+                strVal = json.dumps(config.MEETING)
+                self.wfile.write(bytes(strVal, 'utf-8'))
+
+            if self.path == '/poweroff':
+                # send response code:
+                LOGGER.info("El usuario ha pulsado el boton apagado")
+                restartSession.restart(LOGGER)
                 self.send_response(200)
                 self.send_header("Content-type", "text/plain")
                 self.send_header("Access-Control-Allow-Origin", "*")
                 self.end_headers()
                 self.wfile.write(bytes('OK', 'utf-8'))
-                LOGGER.info("El usuario ha pulsado el boton apagado -- true")
 
-            if self.path == ('/startGmeets'):
-                config.STATUS = "START MEET"
-                config.MEETG = True
-                self.send_response(200)
-                self.end_headers()
-                self.wfile.write(bytes('OK', 'utf-8'))
-
-            if self.path == ('/endGmeets'):
-                config.STATUS = "END MEET"
-                config.MEETG = True
-                self.send_response(200)
-                self.end_headers()
-                self.wfile.write(bytes('OK', 'utf-8'))
-
-            if self.path == ('/startwebexS'):
-                config.STATUSF = "START WEBEX"
-                config.WEBEXS = True
-                self.send_response(200)
-                self.end_headers()
-                self.wfile.write(bytes('OK', 'utf-8'))
-
-            if self.path == ('/endwebexS'):
-                config.STATUSF = "END WEBEX"
-                config.WEBEXS = True
-                self.send_response(200)
-                self.end_headers()
-                self.wfile.write(bytes('OK', 'utf-8'))
-
-            if self.path == ('/restartpc'):
+            if self.path == '/restartpc':
+                LOGGER.info("Reinicio del pc por el usuario")
                 self.send_response(200)
                 self.send_header("Content-type", "text/plain")
                 self.send_header("Access-Control-Allow-Origin", "*")
@@ -82,10 +63,10 @@ class HTTPRequestHandler(BaseHTTPRequestHandler):
 def init(logger):
     try:
         global LOGGER
-        logger = logger
-        logger.info("Iniciando servidor JSON en el puerto " + str(config.HTTP_PORT))
-        server_address = ('127.0.0.1', config.HTTP_PORT)
+        LOGGER = logger
+        logger.info("Iniciando servidor JSON en el puerto 8080")
+        server_address = ('127.0.0.1', 8080)
         httpd = HTTPServer(server_address, HTTPRequestHandler)
         httpd.serve_forever()
     except:
-        logger.error("No se ha podido iniciar el servidor JSON en el puerto " + str(config.HTTP_PORT))
+        logger.error("No se ha podido iniciar el servidor JSON")

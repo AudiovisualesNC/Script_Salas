@@ -1,6 +1,5 @@
 import wmi
 import platform
-import re
 import pythoncom
 import win32api
 import config
@@ -9,35 +8,44 @@ from netifaces import interfaces, ifaddresses
 from datetime import datetime
 
 
-def cam_connect():
-    c = wmi.WMI()
-    wql = "Select * From Win32_USBControllerDevice"
-    cam = ""
-    for item in c.query(wql):
-        q = item.Dependent.Caption
-        if item.Dependent.PNPClass == "Camera" or item.Dependent.PNPClass == "MEDIA":
-            cam = cam + " " + q
+def sys_info(logger):
+    try:
+        cam = ""
+        c = wmi.WMI()
+        wql = "Select * From Win32_USBControllerDevice"
 
-    return cam
+        for item in c.query(wql):
+            q = item.Dependent.Caption
+            if item.Dependent.PNPClass == "Camera" or item.Dependent.PNPClass == "MEDIA":
+                cam = cam + " " + q
+
+        if cam == "":
+            cam = "No detected"
+
+        system = c.Win32_ComputerSystem()[0]
+
+        return cam, system.model
+    except:
+        logger.error("Error getting camera, Error getting system")
+        return "Error getting camera", "Error getting system"
 
 
 def get_ip():
     try:
         return ifaddresses(interfaces()[0])[2][0]['addr']
     except:
-        return ""
+        return "Error getting IP"
 
 
 def room_info(logger):
     pythoncom.CoInitialize()
-    c = wmi.WMI()
-    my_system = c.Win32_ComputerSystem()[0]
+    cam, my_system = sys_info(logger)
 
     now = datetime.now()
-    my_obj = {"ip": get_ip(), 'host': str(platform.node()), "version": config.VERSION, "room_name": config.NOMBRE,
-              "id": config.ID, "port": config.PORT, "open_port": config.OPEN_PORT, "with_button": config.BOTONERA,
-              'windows': str(platform.version()), 'device': str(my_system.model), 'cam': str(cam_connect()),
-              'time': str(now)
+    my_obj = {"ip": get_ip(), 'host': str(platform.node()), "version": config.VERSION, "room_name": config.NAME,
+              "id": config.ID, "port": config.PORT, "open_port": config.OPEN_PORT, "with_button": config.KEYPAD,
+              'windows': str(platform.version()), 'device': str(my_system), 'cam': str(cam), 'monitor': config.MONITOR,
+              'last_connection': str(now),
               }
 
     print("_______________________________")
