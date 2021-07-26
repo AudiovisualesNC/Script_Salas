@@ -26,6 +26,7 @@ def sys_info(logger):
 
         return cam, system.model
     except:
+        config.ERROR = True
         logger.error("Error getting camera, Error getting system")
         return "Error getting camera", "Error getting system"
 
@@ -34,6 +35,7 @@ def get_ip():
     try:
         return ifaddresses(interfaces()[0])[2][0]['addr']
     except:
+        config.ERROR = True
         return "Error getting IP"
 
 
@@ -45,7 +47,8 @@ def room_info(logger):
     my_obj = {"ip": get_ip(), 'host': str(platform.node()), "version": config.VERSION, "room_name": config.NAME,
               "id": config.ID, "port": config.PORT, "open_port": config.OPEN_PORT, "with_button": config.KEYPAD,
               'windows': str(platform.version()), 'device': str(my_system), 'cam': str(cam), 'monitor': config.MONITOR,
-              'last_connection': str(now),
+              'last_connection': str(now), "zone": config.ZONE,  "province": config.PROVINCE, "office": config.OFFICE,
+              "building_name": config.BUILDING_NAME
               }
 
     print("_______________________________")

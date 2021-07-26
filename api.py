@@ -37,6 +37,16 @@ class HTTPRequestHandler(BaseHTTPRequestHandler):
                 strVal = json.dumps(config.MEETING)
                 self.wfile.write(bytes(strVal, 'utf-8'))
 
+            if self.path == '/geterror':
+                # send response code:
+
+                self.send_response(200)
+                self.send_header("Content-type", "text/plain")
+                self.send_header("Access-Control-Allow-Origin", "*")
+                BaseHTTPRequestHandler.end_headers(self)
+                strVal = json.dumps(config.ERROR)
+                self.wfile.write(bytes(strVal, 'utf-8'))
+
             if self.path == '/poweroff':
                 # send response code:
                 LOGGER.info("El usuario ha pulsado el boton apagado")
@@ -57,6 +67,7 @@ class HTTPRequestHandler(BaseHTTPRequestHandler):
                 os.system(r"shutdown /r")
 
         except IOError:
+            config.ERROR = True
             self.send_error(404, 'file not found')
 
 
@@ -69,4 +80,5 @@ def init(logger):
         httpd = HTTPServer(server_address, HTTPRequestHandler)
         httpd.serve_forever()
     except:
+        config.ERROR = True
         logger.error("No se ha podido iniciar el servidor JSON")

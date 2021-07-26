@@ -1,6 +1,8 @@
 import wx
 from win32api import GetSystemMetrics
 
+import config
+
 FRAME = None
 FRAME_1 = None
 
@@ -77,4 +79,5 @@ def init(logger):
 
     except:
         print("2")
+        config.ERROR = True
         logger.error("Error en la ventana de aviso")

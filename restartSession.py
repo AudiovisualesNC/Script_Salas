@@ -24,14 +24,10 @@ global REBOOTING
 # Si termina en 0x0 significa que esta en uso
 
 def videconference():
-    return subprocess.check_output(
-        r'reg query "HKEY_CURRENT_USER\SOFTWARE\Microsoft\Windows\CurrentVersion\CapabilityAccessManager\ConsentStore'
-        r'\microphone\NonPackaged\C:#Program Files#Google#Chrome#Application#chrome.exe" /v  LastUsedTimeStop',
-        shell=True).decode("utf-8").split(" ")[-1].startswith("0x0") or \
-           subprocess.check_output(r'reg query "HKEY_CURRENT_USER\SOFTWARE\Microsoft\Windows\CurrentVersion'
-                                   r'\CapabilityAccessManager\ConsentStore\microphone\NonPackaged\C:#Users#Javier'
-                                   r'#AppData#Local#WebEx#WebEx#Meetings#atmgr.exe" /v  LastUsedTimeStop',
-                                   shell=True).decode("utf-8").split(" ")[-1].startswith("0x0")
+    return "0x0" in subprocess.check_output(
+            r'reg query "HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows\CurrentVersion\CapabilityAccessManager'
+            r'\ConsentStore\microphone\NonPackaged" /s /v  LastUsedTimeStop',
+            shell=True).decode('utf-8', errors='ignore')
 
 
 def restart(logger):
@@ -118,8 +114,13 @@ def init(logger):
                     restart(logger)
 
         except TypeError as e:
-            print(e)
+            config.ERROR = True
+            logger.error("Error en hilo restartSession" + str(e))
+        except subprocess.CalledProcessError as e:
+            config.ERROR = True
+            logger.error("Error en hilo restartSession" + str(e))
         except:
+            config.ERROR = True
             logger.error("Error en hilo restartSession " + str(sys.exc_info()[0]))
 
         time.sleep(1)

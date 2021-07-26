@@ -19,11 +19,36 @@ def init(logger):
         global ID
         ID = "00000"
 
+        # RESTART TIME
         global REBOOT_TIME
         REBOOT_TIME = 5
 
+        # LOCATION
+        global ZONE
+        ZONE = None
+        global PROVINCE
+        PROVINCE = None
+        global OFFICE
+        OFFICE = False
+        global BUILDING_NAME
+        BUILDING_NAME = None
 
-        #Comprobamos si existe el fichero de configuración, si no existe se dejan los valores por defecto
+
+        #OTHER VARIABLES
+        global OPEN_PORT
+        global VERSION
+        global HTTP_PORT
+        global MONITOR
+        global MEETING
+        global ERROR
+
+        MEETING = False
+        OPEN_PORT = False
+        VERSION = "4.2"
+        MONITOR = None
+        ERROR = False
+
+        # Comprobamos si existe el fichero de configuración, si no existe se dejan los valores por defecto
         if os.path.isfile('./config.ini'):
 
             config = configparser.ConfigParser()
@@ -52,35 +77,34 @@ def init(logger):
 
             # AUTOMATIC CLOSE SESSION
 
-
-
             if config.has_option("RESTART", "TIME"):
                 try:
                     REBOOT_TIME = int(config.get("RESTART", "TIME"))
                 except:
                     REBOOT_TIME = 5
 
-        # OTHER GLOBAL VARIABLES
+            # LOCATION INFORMATION
 
-        global OPEN_PORT
-        global VERSION
-        global HTTP_PORT
-        global MONITOR
-        global MEETING
-
-        MEETING = False
-        OPEN_PORT = False
-        VERSION = "4.2"
-        MONITOR = None
+            if config.has_option("LOCATION", "ZONE"):
+                ZONE = str(config.get("LOCATION", "ZONE"))
+            if config.has_option("LOCATION", "PROVINCE"):
+                PROVINCE = str(config.get("LOCATION", "PROVINCE"))
+            if config.has_option("LOCATION", "OFFICE"):
+                OFFICE = str(config.get("LOCATION", "OFFICE"))
+            if config.has_option("LOCATION", "BUILDING_NAME"):
+                BUILDING_NAME = str(config.get("LOCATION", "BUILDING_NAME"))
 
         return True
 
     except configparser.Error as e:
         logger.error("Error al leer los datos del fichero config.ini " + e.message)
+        ERROR = True
         return False
     except TypeError as e:
         logger.error("Error al leer los datos del fichero config.ini " + str(e))
+        ERROR = True
         return False
     except:
         logger.error("Error al leer los datos del fichero config.ini")
+        ERROR = True
         return False

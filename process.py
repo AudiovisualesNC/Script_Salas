@@ -1,6 +1,8 @@
 import os
 import psutil
 
+import config
+
 APP_SYSTEM = list()
 
 
@@ -11,6 +13,7 @@ def process_running(logger, name_process):
                 return True
         return False
     except:
+        config.ERROR = True
         logger.error("Error en process_running")
         return None
 
@@ -23,6 +26,7 @@ def num_process_running(logger, name_process):
                 num = num + 1
         return num
     except:
+        config.ERROR = True
         logger.error("Error en num_process_running")
         return None
 
@@ -35,6 +39,7 @@ def delete_app_user(logger):
                     os.system("taskkill /f /im " + proc.info["name"] + " /t")
 
     except:
+        config.ERROR = True
         logger.error("Error en función delete_app_user ")
 
 
@@ -48,4 +53,5 @@ def app_system(logger):
                     APP_SYSTEM.append((proc.info["name"]))
 
     except:
+        config.ERROR = True
         logger.error("Error en función AppSystem ")

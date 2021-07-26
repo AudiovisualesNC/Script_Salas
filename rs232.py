@@ -24,6 +24,8 @@ SER = None
 '''
 Clase que recibe los bytes de entrada en el puerto serie cuando hay botonera
 '''
+
+
 class RingBuffer:
     def __init__(self):
         self.data = ''
@@ -47,6 +49,8 @@ class RingBuffer:
 '''
 Recibe los bytes y lo devuelve en un formato string
 '''
+
+
 def string_to_hex_botonera(asciiString):
     code = ""
     '''
@@ -65,6 +69,21 @@ def string_to_hex_botonera(asciiString):
 def string_to_hex(str_hex):
     return unhexlify(str_hex.replace(":", ""))
 
+#Alternativa para detectar el monitor con powershell
+'''
+def check_monitor(logger):
+    result = subprocess.run(["powershell", "-Command", "gwmi WmiMonitorID -Namespace root\wmi"],
+                            capture_output=True).stdout.decode("utf-8", errors='ignore')
+    if "SAM" in result:
+        #config.MONITOR = "SAMSUNG"
+        logger.info("Powershell -- SAMSUNG")
+    elif "SNY" in result:
+        #config.MONITOR = "SONY"
+        logger.info("Powershell -- SONY")
+    else:
+        #config.MONITOR = "UNKNOW"
+        logger.info("Powershell -- Desconocido")
+'''
 
 def configure_port_monitor(logger):
     # Recorremos todos los puertos COM del pc
@@ -123,12 +142,16 @@ def configure_port_monitor(logger):
                         logger.info("Puerto " + port + " abierto, monitor desconocido")
                         return ser
         except binascii.Error as e:
+            config.ERROR = True
             print(e)
         except serial.serialutil.SerialTimeoutException as e:
+            config.ERROR = True
             print(e)
         except serial.serialutil.SerialException as e:
+            config.ERROR = True
             print(e)
         except:
+            config.ERROR = True
             logger.error(sys.exc_info()[0])
 
     logger.info("Control RS232 no configurado")
@@ -148,6 +171,7 @@ def init_reader(logger):
             else:
                 logger.error("No se puede abrir el puerto " + config.PORT)
         except:
+            config.ERROR = True
             logger.error("Error al abrir el puerto " + config.PORT)
     else:
         logger.error("Configurada botonera pero no el puerto")
@@ -187,13 +211,16 @@ def reader(logger, ser):
                         webbrowser.get(chrome_path).open("https://bbva.webex.com")
                         logger.info("Abriendo  Webex en el navegador")
                     except:
+                        config.ERROR = True
                         logger.error("No se ha podido abrir el navegador")
     except:
+        config.ERROR = True
         logger.error("Error al leer la botonera")
 
 
 def init_sender(logger):
     global SER
+    #check_monitor(logger)
     SER = configure_port_monitor(logger)
 
 
