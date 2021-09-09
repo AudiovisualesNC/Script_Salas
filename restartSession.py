@@ -12,6 +12,8 @@ import os
 import process
 import subprocess
 
+import winreg
+
 global SYSTEM_ON
 global REBOOTING
 
@@ -24,10 +26,18 @@ global REBOOTING
 # Si termina en 0x0 significa que esta en uso
 
 def videconference():
-    return "0x0" in subprocess.check_output(
-            r'reg query "HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows\CurrentVersion\CapabilityAccessManager'
-            r'\ConsentStore\microphone\NonPackaged" /s /v  LastUsedTimeStop',
-            shell=True).decode('utf-8', errors='ignore')
+    access_registry = winreg.ConnectRegistry(None, winreg.HKEY_LOCAL_MACHINE)
+
+    primary_access_key = winreg.OpenKey(access_registry, r"SOFTWARE\Microsoft\Windows\CurrentVersion\CapabilityAccessManager\ConsentStore\microphone\NonPackaged")
+    # accessing the key to open the registry directories under
+    for n in range(30):
+        try:
+            x = winreg.EnumKey(primary_access_key, n)
+            secondary_access_key = winreg.OpenKey(access_registry,r"SOFTWARE\Microsoft\Windows\CurrentVersion\CapabilityAccessManager\ConsentStore\microphone\NonPackaged\\" + x)
+            if winreg.EnumValue(secondary_access_key, 1)[1] == 0:
+                return True
+        except:
+            return False
 
 
 def restart(logger):
@@ -61,14 +71,13 @@ def init(logger):
     SYSTEM_ON = True
     global REBOOTING
     REBOOTING = False
-
     # Time sleep para que se inicien los demas procesos
     time.sleep(10)
 
     while True:
+
         try:
             update_meeting_started = videconference()
-
             # Cuando se termina una videoconferencia necesitamos borrar la clave de registro por si se ha usado webex
             # y necesitamos reiniciar el idle time a si que simulamos una pulsacion de teclas, si no reiniciamos el
             # idle time if (info.get_idle_time() > config.REBOOT_TIME * 60) and not meeting_started and
@@ -114,6 +123,9 @@ def init(logger):
                     restart(logger)
 
         except TypeError as e:
+            config.ERROR = True
+            logger.error("Error en hilo restartSession" + str(e))
+        except OSError as e:
             config.ERROR = True
             logger.error("Error en hilo restartSession" + str(e))
         except subprocess.CalledProcessError as e:

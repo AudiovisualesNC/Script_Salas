@@ -167,6 +167,7 @@ def init_reader(logger):
 
             if ser.isOpen():
                 logger.info("Puerto " + config.PORT + " abierto")
+                config.OPEN_PORT = True
                 reader(logger, ser)
             else:
                 logger.error("No se puede abrir el puerto " + config.PORT)

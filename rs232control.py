@@ -48,6 +48,3 @@ if __name__ == "__main__":
             adviceMessage.init(logger)
 
         time.sleep(10)
-
-    else:
-        logger.info("RS232 Control ya esta en ejecución")
